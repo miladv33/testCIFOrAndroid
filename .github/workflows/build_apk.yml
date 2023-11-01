@@ -1,37 +1,15 @@
-name: Build and Generate APK
-
-on:
-  push:
-    branches:
-      - main
-
+name: Android Build
+on: push
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Install Qt
-        run: |
-        sudo apt-get update
-        sudo apt-get install -y qt5-default qtbase5-dev qtdeclarative5-dev
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Setup Qt
-        uses: jurplel/setup-qt@v1
-
-      - name: Build Project
-        run: |
-          qmake
-          make
-
-      - name: Generate APK
-        run: |
-          # Add commands to generate APK from your project here
-        # Example: androiddeployqt or another build tool
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v2
+      - uses: actions/checkout@v1
+      - name: Set Up JDK
+        uses: actions/setup-java@v1
         with:
-          name: my-apk
-          path: path/to/apk-file
+          java-version: 1.8
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
+      - name: Build Project
+        run: ./gradlew assemble

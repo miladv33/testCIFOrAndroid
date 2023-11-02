@@ -17,7 +17,8 @@ jobs:
         run: |
           choco install qt5-default
           setx PATH "%PATH%;C:\Qt\5.15.2\bin"
-          setx QMAKE "C:\Qt\5.15.2\bin\qmake.exe"
+          setx QMAKE "C:\Qt\5.15.2\msvc2019_64\bin\qmake.exe"
+
           qmake --version
         shell: cmd
 

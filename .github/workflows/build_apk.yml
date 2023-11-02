@@ -1,24 +1,40 @@
-name: QT Build
-on: push
+name: Build and Generate APK
+
+on:
+  push:
+    branches:
+      - main
+
 jobs:
   build:
     runs-on: windows-latest
+
     steps:
-      - uses: actions/checkout@v1
-      - name: Set Up MSYS2
-        uses: microsoft/setup-msys2@v1
-        with:
-          install: mingw-w64-x86_64-toolchain
-          msystem: MINGW64
-      - name: Install QT
-        uses: jurplel/install-qt-action@v2
-        with:
-          version: '5.12.11'
-          host: 'windows'
-          target: 'desktop'
-          arch: 'win64_mingw73'
-          dir: '${{github.workspace}}/qt/'
-      - name: Configure CMake
-        run: cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="${{env.Qt5_Dir}}/lib/cmake/" -G "CodeBlocks - MinGW Makefiles" -B '${{github.workspace}}'/build
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Setup Qt
+        run: |
+          choco install qt5 --params "'/NoPath /D=C:\Qt'"
+          setx PATH "%PATH%;C:\Qt\5.15.2\msvc2019\bin"
+          setx QMAKE "C:\Qt\5.15.2\msvc2019\bin\qmake.exe"
+          qmake --version
+        shell: cmd
+
       - name: Build Project
-        run: cmake --build '${{github.workspace}}'/build --target YourProjectName
+        run: |
+          qmake
+          nmake
+        shell: cmd
+
+      - name: Generate APK
+        run: |
+          # Add commands to generate APK from your project here
+          # Example: androiddeployqt or another build tool
+        shell: cmd
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: my-apk
+          path: path/to/apk-file

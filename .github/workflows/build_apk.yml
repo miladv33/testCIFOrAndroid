@@ -18,7 +18,7 @@ jobs:
           choco install qt5-default
           setx PATH "%PATH%;C:\Qt\5.15.2\bin"
           setx QMAKE "C:\Qt\5.15.2\msvc2019_64\bin\qmake.exe"
-          qmake --version
+#          qmake --version
         shell: cmd
 
       - name: Print Subfolders
@@ -27,7 +27,7 @@ jobs:
           import os
 
           # Define the folder path
-          folder_path = "C:\Qt\5.15.2"
+          folder_path = "C:\Qt"
 
           # Define a function to print all subfolders and subdirectories recursively
           def print_subfolders(path):

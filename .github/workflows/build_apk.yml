@@ -13,14 +13,39 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-#      - name: Setup Qt
-#        run: |
-#          choco install qt5-default
-#          setx PATH "%PATH%;C:\Qt\5.15.2\bin"
-#          setx QMAKE "C:\Qt\5.15.2\msvc2019_64\bin\qmake.exe"
+      - name: Setup Qt
+        run: |
+          choco install qt5-default
+          setx PATH "%PATH%;C:\Qt\5.15.2\bin"
+          setx QMAKE "C:\Qt\5.15.2\msvc2019_64\bin\qmake.exe"
+          qmake --version
+        shell: cmd
 
-#          qmake --version
-#        shell: cmd
+      - name: Print Subfolders
+        run: |
+          # Import os module
+          import os
+
+          # Define the folder path
+          folder_path = "C:\Qt\5.15.2"
+
+          # Define a function to print all subfolders and subdirectories recursively
+          def print_subfolders(path):
+            # Get the list of subfolders and files in the current path
+            subfolders = os.listdir(path)
+            # Loop through each subfolder or file
+            for subfolder in subfolders:
+              # Join the current path and the subfolder or file name
+              subfolder_path = os.path.join(path, subfolder)
+              # Print the subfolder or file name
+              print(subfolder_path)
+              # If the subfolder or file is a directory, call the function recursively
+              if os.path.isdir(subfolder_path):
+                print_subfolders(subfolder_path)
+
+          # Call the function with the folder path
+          print_subfolders(folder_path)
+        shell: python
 
       - name: Setup Android SDK and NDK
         uses: android-actions/setup-android@v2
@@ -29,16 +54,16 @@ jobs:
           ndk-version: 21.4.7075529
           cmake-version: 3.10.2
 
-#      - name: Build Project
-#        run: |
-#          qmake -spec android-clang "ANDROID_ABIS=arm64-v8a" "ANDROID_SDK_ROOT=$env:ANDROID_SDK_ROOT" "ANDROID_NDK_ROOT=$env:ANDROID_NDK_ROOT" "ANDROID_NDK_HOST=windows-x86_64"
-#          nmake
-#        shell: cmd
+      - name: Build Project
+        run: |
+          qmake -spec android-clang "ANDROID_ABIS=arm64-v8a" "ANDROID_SDK_ROOT=$env:ANDROID_SDK_ROOT" "ANDROID_NDK_ROOT=$env:ANDROID_NDK_ROOT" "ANDROID_NDK_HOST=windows-x86_64"
+          nmake
+        shell: cmd
 
-#      - name: Generate APK
-#        run: |
-#          androiddeployqt --input android-libmyapp.so-deployment-settings.json --output $env:GITHUB_WORKSPACE/android-build --android-platform android-29 --jdk $env:JAVA_HOME --gradle --sign myapp.keystore myapp_alias --storepass myapp_password
-#        shell: cmd
+      - name: Generate APK
+        run: |
+          androiddeployqt --input android-libmyapp.so-deployment-settings.json --output $env:GITHUB_WORKSPACE/android-build --android-platform android-29 --jdk $env:JAVA_HOME --gradle --sign myapp.keystore myapp_alias --storepass myapp_password
+        shell: cmd
 
       - name: Upload APK
         uses: actions/upload-artifact@v2

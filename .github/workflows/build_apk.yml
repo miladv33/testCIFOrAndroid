@@ -15,22 +15,28 @@ jobs:
 
       - name: Setup Qt
         run: |
-          choco install qt5 --pre
-          setx PATH "%PATH%;C:\Qt\5.15.2\msvc2019\bin"
-          setx QMAKE "C:\Qt\5.15.2\msvc2019\bin\qmake.exe"
+          choco install qt5-default
+          setx PATH "%PATH%;C:\Qt\5.15.2\bin"
+          setx QMAKE "C:\Qt\5.15.2\bin\qmake.exe"
           qmake --version
         shell: cmd
 
+      - name: Setup Android SDK and NDK
+        uses: android-actions/setup-android@v2
+        with:
+          api-level: 29
+          ndk-version: 21.4.7075529
+          cmake-version: 3.10.2
+
       - name: Build Project
         run: |
-          qmake
+          qmake -spec android-clang "ANDROID_ABIS=arm64-v8a" "ANDROID_SDK_ROOT=$env:ANDROID_SDK_ROOT" "ANDROID_NDK_ROOT=$env:ANDROID_NDK_ROOT" "ANDROID_NDK_HOST=windows-x86_64"
           nmake
         shell: cmd
 
       - name: Generate APK
         run: |
-          # Add commands to generate APK from your project here
-          # Example: androiddeployqt or another build tool
+          androiddeployqt --input android-libmyapp.so-deployment-settings.json --output $env:GITHUB_WORKSPACE/android-build --android-platform android-29 --jdk $env:JAVA_HOME --gradle --sign myapp.keystore myapp_alias --storepass myapp_password
         shell: cmd
 
       - name: Upload APK

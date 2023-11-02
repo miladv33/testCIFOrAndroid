@@ -15,7 +15,7 @@ jobs:
 
       - name: Setup Qt
         run: |
-          choco install qt5 --params "'/NoPath /D=C:\Qt'" --source=chocolatey
+          choco choco install qt5 --source=chocolatey
           setx PATH "%PATH%;C:\Qt\5.15.2\msvc2019\bin"
           setx QMAKE "C:\Qt\5.15.2\msvc2019\bin\qmake.exe"
           qmake --version

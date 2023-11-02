@@ -13,14 +13,14 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Setup Qt
-        run: |
-          choco install qt5-default
-          setx PATH "%PATH%;C:\Qt\5.15.2\bin"
-          setx QMAKE "C:\Qt\5.15.2\msvc2019_64\bin\qmake.exe"
+#      - name: Setup Qt
+#        run: |
+#          choco install qt5-default
+#          setx PATH "%PATH%;C:\Qt\5.15.2\bin"
+#          setx QMAKE "C:\Qt\5.15.2\msvc2019_64\bin\qmake.exe"
 
-          qmake --version
-        shell: cmd
+#          qmake --version
+#        shell: cmd
 
       - name: Setup Android SDK and NDK
         uses: android-actions/setup-android@v2
@@ -29,16 +29,16 @@ jobs:
           ndk-version: 21.4.7075529
           cmake-version: 3.10.2
 
-      - name: Build Project
-        run: |
-          qmake -spec android-clang "ANDROID_ABIS=arm64-v8a" "ANDROID_SDK_ROOT=$env:ANDROID_SDK_ROOT" "ANDROID_NDK_ROOT=$env:ANDROID_NDK_ROOT" "ANDROID_NDK_HOST=windows-x86_64"
-          nmake
-        shell: cmd
+#      - name: Build Project
+#        run: |
+#          qmake -spec android-clang "ANDROID_ABIS=arm64-v8a" "ANDROID_SDK_ROOT=$env:ANDROID_SDK_ROOT" "ANDROID_NDK_ROOT=$env:ANDROID_NDK_ROOT" "ANDROID_NDK_HOST=windows-x86_64"
+#          nmake
+#        shell: cmd
 
-      - name: Generate APK
-        run: |
-          androiddeployqt --input android-libmyapp.so-deployment-settings.json --output $env:GITHUB_WORKSPACE/android-build --android-platform android-29 --jdk $env:JAVA_HOME --gradle --sign myapp.keystore myapp_alias --storepass myapp_password
-        shell: cmd
+#      - name: Generate APK
+#        run: |
+#          androiddeployqt --input android-libmyapp.so-deployment-settings.json --output $env:GITHUB_WORKSPACE/android-build --android-platform android-29 --jdk $env:JAVA_HOME --gradle --sign myapp.keystore myapp_alias --storepass myapp_password
+#        shell: cmd
 
       - name: Upload APK
         uses: actions/upload-artifact@v2

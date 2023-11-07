@@ -4,51 +4,68 @@ on: [push]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
+    
     steps:
     - uses: actions/checkout@v2
-    - name: Install Qt
+
+    - name: Install Qt 
       uses: jurplel/install-qt-action@v3
-      with:
+      with: 
         version: 6.4.0
         host: linux
         target: android
         arch: android_arm64_v8a
         modules: qtcharts
+        
     - name: Set up JDK 11
       uses: actions/setup-java@v2
       with:
         java-version: '11'
         distribution: 'adopt'
-    - name: Set up Android SDK and NDK
+        
+    - name: Set up Android SDK and NDK   
       uses: android-actions/setup-android@v2
       with:
         api-level: 29
         ndk-version: 21.4.7075529
         target: x86_64
-        
+
+    - name: Install Qt for Linux
+      uses: jurplel/install-qt-action@v3 
+      with:
+        version: 6.4.0
+        host: linux
+        target: desktop
+        arch: gcc_64
+        dir: Qt-linux
+
     - name: Configure CMake
       run: |
-            export CMAKE_PREFIX_PATH="$RUNNER_WORKSPACE/Qt/6.2.0/gcc_64/lib/cmake"
-            export Qt6_DIR="$RUNNER_WORKSPACE/Qt/6.2.0/gcc_64/lib/cmake/Qt6"
-            export QT_HOST_PATH="$RUNNER_WORKSPACE/Qt/6.2.0/gcc_64"  # Set the QT_HOST_PATH
-            cmake -B ${{ github.workspace }}/build -S ${{ github.workspace }}
-      
+        export CMAKE_PREFIX_PATH="$RUNNER_WORKSPACE/Qt-linux/6.4.0/gcc_64/lib/cmake"
+        cmake -B ${{ github.workspace }}/build -S ${{ github.workspace }}
+
+    - name: Create Build Directory
+      run: |
+          rm -rf build
+          mkdir build
+          cd build
+      working-directory: ${{ github.workspace }}
+
     - name: Build with CMake
       env:
-        CMAKE_PREFIX_PATH: /home/user/Qt6/6.4.2/android_arm64_v8a
+        CMAKE_PREFIX_PATH: /home/runner/work/testCIFOrAndroid/Qt-linux/6.4.0/gcc_64/lib/cmake 
       run: |
-        mkdir build && cd build
         cmake .. -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -DANDROID_ABI=x86_64 -DANDROID_NATIVE_API_LEVEL=29 -DCMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH
         cmake --build . --config Release
-    - name: Create APK
+
+    - name: Create APK  
       run: |
-        cd build
+        cd build 
         make create-apk-MyApp
+
     - name: Upload APK
       uses: actions/upload-artifact@v2
       with:
-        name: MyApp.apk
-        path: build/android-build/build/outputs/apk/debug/android-build-debug.apk
+       name: MyApp.apk
+       path: build/android-build/build/outputs/apk/debug/android-build-debug.apk

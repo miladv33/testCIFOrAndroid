@@ -42,8 +42,8 @@ jobs:
 
     - name: Configure CMake
       run: |
-          cd ${{ github.workspace }}/build
-          cmake -S ${{ github.workspace }} -B . -DCMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH
+        export CMAKE_PREFIX_PATH="$RUNNER_WORKSPACE/Qt-linux/6.4.0/gcc_64/lib/cmake"
+        cmake -B ${{ github.workspace }}/build -S ${{ github.workspace }}
 
     - name: Create Build Directory
       run: |
@@ -54,10 +54,11 @@ jobs:
 
     - name: Build with CMake
       env:
-        CMAKE_PREFIX_PATH: /home/runner/work/testCIFOrAndroid/Qt-linux/6.4.0/gcc_64/lib/cmake 
+        CMAKE_PREFIX_PATH: /home/runner/work/testCIFOrAndroid/Qt-linux/6.4.0/gcc_64/lib/cmake
       run: |
-        cd ${{ github.workspace }}/build
-        cmake .. -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -DANDROID_ABI=x86_64 -DANDROID_NATIVE_API_LEVEL=29 -DCMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH
+        ls
+        cd build 
+        cmake -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -DANDROID_ABI=x86_64 -DANDROID_NATIVE_API_LEVEL=29 -DCMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH ..
         cmake --build . --config Release
 
     - name: Create APK  

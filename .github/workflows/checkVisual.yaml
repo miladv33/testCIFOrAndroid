@@ -48,7 +48,7 @@ jobs:
 
     - name: Create Build Directory
       run: |
-          Remove-Item -Recurse -Force $env:GITHUB_WORKSPACE\build
+          # Remove-Item -Recurse -Force $env:GITHUB_WORKSPACE\build
           New-Item -ItemType Directory -Path $env:GITHUB_WORKSPACE\build
           Set-Location -Path $env:GITHUB_WORKSPACE\build
       shell: pwsh

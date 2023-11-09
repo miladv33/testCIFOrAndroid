@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     
     steps:
     - uses: actions/checkout@v2
@@ -13,7 +13,7 @@ jobs:
       uses: jurplel/install-qt-action@v3
       with: 
         version: 6.4.0
-        host: linux
+        host: windows
         target: android
         arch: android_arm64_v8a
         modules: qtcharts
@@ -31,34 +31,34 @@ jobs:
         ndk-version: 21.4.7075529
         target: x86_64
 
-    - name: Install Qt for Linux
+    - name: Install Qt for Windows
       uses: jurplel/install-qt-action@v3 
       with:
         version: 6.4.0
-        host: linux
+        host: windows
         target: desktop
-        arch: gcc_64
-        dir: Qt-linux
+        arch: win64_msvc2019
+        dir: Qt-windows
 
     - name: Configure CMake
       run: |
-        export CMAKE_PREFIX_PATH="$RUNNER_WORKSPACE/Qt-linux/6.4.0/gcc_64/lib/cmake"
-        cmake -B ${{ github.workspace }}/build -S ${{ github.workspace }}
+        $env:CMAKE_PREFIX_PATH="$env:RUNNER_WORKSPACE/Qt-windows/6.4.0/win64_msvc2019/lib/cmake"
+        cmake -B $env:GITHUB_WORKSPACE/build -S $env:GITHUB_WORKSPACE
 
     - name: Create Build Directory
       run: |
-          rm -rf build
-          mkdir build
+          Remove-Item -Recurse -Force build
+          New-Item -ItemType Directory -Path build
           cd build
-      working-directory: ${{ github.workspace }}
+      working-directory: $env:GITHUB_WORKSPACE
 
     - name: Build with CMake
       env:
-        CMAKE_PREFIX_PATH: /home/runner/work/testCIFOrAndroid/Qt-linux/6.4.0/gcc_64/lib/cmake
+        CMAKE_PREFIX_PATH: /home/runner/work/testCIFOrAndroid/Qt-windows/6.4.0/win64_msvc2019/lib/cmake
       run: |
         ls
         cd build 
-        cmake -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -DANDROID_ABI=x86_64 -DANDROID_NATIVE_API_LEVEL=29 -DCMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH ..
+        cmake -DCMAKE_TOOLCHAIN_FILE=$env:ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -DANDROID_ABI=x86_64 -DANDROID_NATIVE_API_LEVEL=29 -DCMAKE_PREFIX_PATH=$env:CMAKE_PREFIX_PATH ..
         cmake --build . --config Release
 
     - name: Create APK  

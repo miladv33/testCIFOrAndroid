@@ -56,13 +56,12 @@ jobs:
       
       
     - name: Build with CMake
-      env:
-        CMAKE_PREFIX_PATH: /home/runner/work/testCIFOrAndroid/Qt-windows/6.4.0/win64_msvc2019/lib/cmake
       run: |
         ls
         cd build 
-        cmake -DCMAKE_TOOLCHAIN_FILE=$env:ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -DANDROID_ABI=x86_64 -DANDROID_NATIVE_API_LEVEL=29 -DCMAKE_PREFIX_PATH=$env:CMAKE_PREFIX_PATH ..
+        cmake -DCMAKE_TOOLCHAIN_FILE="C:/Program Files/Android/Android Studio/ndk/21.4.7075529/build/cmake/android.toolchain.cmake" -DANDROID_ABI=x86_64 -DANDROID_NATIVE_API_LEVEL=29 -DCMAKE_PREFIX_PATH=$env:CMAKE_PREFIX_PATH ..
         cmake --build . --config Release
+    
 
     - name: Create APK  
       run: |

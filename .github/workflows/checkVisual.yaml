@@ -40,17 +40,18 @@ jobs:
     #     arch: win64_msvc2019
     #     dir: Qt-windows
 
+    - name: Create Build Directory
+      run: |
+        Remove-Item -Recurse -Force build
+        New-Item -ItemType Directory -Path build
+        cd build
+
     - name: Configure CMake
       run: |
         $env:CMAKE_PREFIX_PATH="$env:RUNNER_WORKSPACE/Qt-windows/6.4.0/win64_msvc2019/lib/cmake"
         $env:Qt6_DIR="$env:RUNNER_WORKSPACE/Qt-windows/6.4.0/win64_msvc2019/lib/cmake/Qt6"
         cmake -B $env:GITHUB_WORKSPACE/build -S $env:GITHUB_WORKSPACE
 
-    - name: Create Build Directory
-      run: |
-          Remove-Item -Recurse -Force build
-          New-Item -ItemType Directory -Path build
-          cd build
       working-directory: $env:GITHUB_WORKSPACE
 
     - name: Build with CMake

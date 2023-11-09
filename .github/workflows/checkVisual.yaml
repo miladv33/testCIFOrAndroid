@@ -43,7 +43,7 @@ jobs:
     - name: Configure CMake
       run: |
        $env:CMAKE_PREFIX_PATH="$env:RUNNER_WORKSPACE/Qt-windows/6.4.0/win64_msvc2019/lib/cmake"
-       cmake -B $env:GITHUB_WORKSPACE/build -S $env:GITHUB_WORKSPACE -DQT_HOST_PATH="$env:RUNNER_WORKSPACE/Qt-windows/6.4.0/win64_msvc2019"
+       cmake -B $env:GITHUB_WORKSPACE/build -S $env:GITHUB_WORKSPACE -DQT_HOST_PATH:PATH="$env:RUNNER_WORKSPACE/Qt-windows/6.4.0/win64_msvc2019"
 
     - name: Create Build Directory
       run: |

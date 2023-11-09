@@ -36,13 +36,13 @@ jobs:
 
     - name: Configure CMake
       env:
-        CMAKE_PREFIX_PATH: ${{ env.RUNNER_WORKSPACE }}/Qt/6.4.0/android_arm64_v8a/lib/cmake # Point to Android Qt install
-        ANDROID_ABI: android_arm64_v8a 
+          CMAKE_PREFIX_PATH: ${{ env.RUNNER_WORKSPACE }}/Qt/6.4.0/android_arm64_v8a/lib/cmake 
+          ANDROID_ABI: android_arm64_v8a
       run: |
-        cmake -B ${{ env.GITHUB_WORKSPACE }}/build -S ${{ env.GITHUB_WORKSPACE }} \
-          -DCMAKE_TOOLCHAIN_FILE="C:/Path/To/android.toolchain.cmake" \
-          -DANDROID_NATIVE_API_LEVEL=29 \
-          -DCMAKE_BUILD_TYPE=Release
+          cmake -B ${{ env.GITHUB_WORKSPACE }}/build -S ${{ env.GITHUB_WORKSPACE }} \
+            -DCMAKE_TOOLCHAIN_FILE="C:/Program Files/Android/Android Studio/ndk/21.4.7075529/build/cmake/android.toolchain.cmake" \
+            -DANDROID_NATIVE_API_LEVEL=29 \
+            -DCMAKE_BUILD_TYPE=Release
 
     - name: Build with CMake  
       run: |

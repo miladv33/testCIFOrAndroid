@@ -7,10 +7,27 @@ jobs:
   build:
 
     runs-on: windows-latest
+    
+    env:
+      CMAKE_PREFIX_PATH: ${{ runner.workspace }}/Qt/6.4.0/android_arm64_v8a/lib/cmake
+      ANDROID_ABI: android_arm64_v8a
 
     steps:
-
     - uses: actions/checkout@v2
+
+    - name: Cache Qt
+      uses: actions/cache@v2
+      with:
+        path: ${{ runner.workspace }}/Qt
+        key: qt-${{ runner.os }}-${{ hashFiles('**/install-qt-action@v3') }}
+
+    - name: Cache Android SDK and NDK
+      uses: actions/cache@v2
+      with:
+        path: |
+          ${{ env.ANDROID_HOME }}
+          ${{ env.ANDROID_SDK_ROOT }}
+        key: android-${{ runner.os }}-${{ hashFiles('**/setup-android@v2') }}
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
@@ -20,13 +37,13 @@ jobs:
         target: android
         arch: android_arm64_v8a
         modules: qtcharts
-        
+
     - name: Set up JDK 11
       uses: actions/setup-java@v2
       with:
         java-version: '11'
         distribution: 'adopt'
-        
+
     - name: Set up Android SDK  
       uses: android-actions/setup-android@v2
       with:
@@ -35,23 +52,19 @@ jobs:
         target: x86_64
 
     - name: Configure CMake
-      env:
-          CMAKE_PREFIX_PATH: ${{ env.RUNNER_WORKSPACE }}/Qt/6.4.0/android_arm64_v8a/lib/cmake
-          ANDROID_ABI: android_arm64_v8a
       run: |
-          cmake -B ${{ env.GITHUB_WORKSPACE }}/build -S ${{ env.GITHUB_WORKSPACE }} \
-            -DCMAKE_TOOLCHAIN_FILE="C:/Program Files/Android/Android Studio/ndk/21.4.7075529/build/cmake/android.toolchain.cmake" \
-            -DANDROID_NATIVE_API_LEVEL=29 \
-            -DCMAKE_BUILD_TYPE=Release
-    
+        cmake -B ${{ runner.workspace }}/build -S ${{ runner.workspace }} \
+          -DCMAKE_TOOLCHAIN_FILE="C:/Program Files/Android/Android Studio/ndk/21.4.7075529/build/cmake/android.toolchain.cmake" \
+          -DANDROID_NATIVE_API_LEVEL=29 \
+          -DCMAKE_BUILD_TYPE=Release
+
     - name: Create APK  
       run: |
-            cd build 
-            make create-apk-MyApp
-    
+        cd ${{ runner.workspace }}/build 
+        make create-apk-MyApp
+
     - name: Upload APK
       uses: actions/upload-artifact@v2
       with:
-           name: MyApp.apk
-           path: build/android-build/build/outputs/apk/debug/android-build-debug.apk
-    
+        name: MyApp.apk
+        path: ${{ runner.workspace }}/build/android-build/build/outputs/apk/debug/android-build-debug.apk

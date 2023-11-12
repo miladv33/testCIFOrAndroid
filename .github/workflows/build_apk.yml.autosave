@@ -1,0 +1,73 @@
+# name: Build and Generate APK
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   build:
+#     runs-on: windows-latest
+
+#     steps:
+#       - name: Checkout Repository
+#         uses: actions/checkout@v2
+
+#       - name: Set up Cache
+#         uses: actions/cache@v2
+#         with:
+#           path: |
+#             C:\Program Files (x86)\Microsoft Visual Studio\2019
+#           key: vs2019-Windows-${{ hashFiles('requirements.txt') }}
+#           restore-keys: |
+#             vs2019-Windows-
+
+#       - name: Install Visual Studio
+#         run: |
+#           choco install visualstudio2019community --package-parameters "--add Microsoft.VisualStudio.Workload.NativeDesktop"
+#         shell: cmd
+
+#       - name: Find vcvarsall.bat
+#         run: |
+#           # Find and store the path to vcvarsall.bat in an environment variable
+#           $env:VCVARSALL_PATH = Get-Command vcvarsall.bat | Select-Object -ExpandProperty Source
+#         shell: cmd
+
+#       - name: Setup MSVC Environment
+#         run: |
+#           # Use the stored VCVARSALL_PATH environment variable
+#           "$env:VCVARSALL_PATH" x64
+#         shell: cmd
+        
+
+#       - name: Setup Qt
+#         run: |
+#           choco install qt6-sdk
+#           setx PATH "%PATH%;C:\Qt\6.2.4\msvc2022_64\bin"
+#           setx QMAKE "C:\Qt\6.2.4\msvc2022_64\bin\qmake.exe"
+#           qmake --version
+#         shell: cmd
+
+#       - name: Setup Android SDK and NDK
+#         uses: android-actions/setup-android@v2
+#         with:
+#           api-level: 29
+#           ndk-version: 21.4.7075529
+#           cmake-version: 3.10.2
+
+#       - name: Build Project
+#         run: |
+#           qmake -spec android-clang "ANDROID_ABIS=arm64-v8a" "ANDROID_SDK_ROOT=$env:ANDROID_SDK_ROOT" "ANDROID_NDK_ROOT=$env:ANDROID_NDK_ROOT" "ANDROID_NDK_HOST=windows-x86_64"
+#           nmake
+#         shell: cmd
+
+#       - name: Generate APK
+#         run: |
+#           androiddeployqt --input android-libmyapp.so-deployment-settings.json --output $env:GITHUB_WORKSPACE/android-build --android-platform android-29 --jdk $env:JAVA_HOME --gradle --sign myapp.keystore myapp_alias --storepass myapp_password
+#         shell: cmd
+
+#       - name: Upload APK
+#         uses: actions/upload-artifact@v2
+#         with:
+#           name: my-apk
+#           path: path/to/apk-file

@@ -34,25 +34,26 @@ jobs:
         ndk-version: 21.4.7075529 # Check this matches installed NDK version
         target: x86_64
 
-- name: Configure CMake
-  run: |
-    "C:/Program Files/CMake/bin/cmake.exe" --build ${{ env.GITHUB_WORKSPACE }}/build-TestForCICD-Android_Qt_6_4_2_android_arm64_v8a_Clang_arm64_v8a-Debug --target all
-
-    - name: Build with CMake  
+    - name: Configure CMake
       run: |
-        cmake --build ${{ env.GITHUB_WORKSPACE }}/build --config Release
-
-    # Rest of workflow for APK creation/upload
+        "C:/Program Files/CMake/bin/cmake.exe" --build ${{ env.GITHUB_WORKSPACE }}/build-TestForCICD-Android_Qt_6_4_2_android_arm64_v8a_Clang_arm64_v8a-Debug --target all
     
+        - name: Build with CMake  
+          run: |
+            cmake --build ${{ env.GITHUB_WORKSPACE }}/build --config Release
     
-
+        # Rest of workflow for APK creation/upload
+        
+        
+    
     - name: Create APK  
       run: |
-        cd build 
-        make create-apk-MyApp
-
+            cd build 
+            make create-apk-MyApp
+    
     - name: Upload APK
       uses: actions/upload-artifact@v2
       with:
-       name: MyApp.apk
-       path: build/android-build/build/outputs/apk/debug/android-build-debug.apk
+           name: MyApp.apk
+           path: build/android-build/build/outputs/apk/debug/android-build-debug.apk
+    
